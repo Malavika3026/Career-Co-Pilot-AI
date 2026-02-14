@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Career Navigator AI</title>
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            margin-top: 50px;
+        }
+        input, textarea {
+            width: 300px;
+            padding: 8px;
+            margin: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+        }
+        #result {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Career Navigator AI</h1>
+
+<input type="text" id="name" placeholder="Name"><br>
+<input type="text" id="skills" placeholder="Skills (comma separated)"><br>
+<input type="text" id="interests" placeholder="Interests"><br>
+<input type="text" id="education" placeholder="Education"><br>
+
+<button onclick="analyze()">Analyze</button>
+
+<div id="result"></div>
+
+<script>
+async function analyze() {
+    const response = await fetch("http://127.0.0.1:8000/analyze", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            name: document.getElementById("name").value,
+            skills: document.getElementById("skills").value,
+            interests: document.getElementById("interests").value,
+            education: document.getElementById("education").value
+        })
+    });
+
+    const data = await response.json();
+
+    document.getElementById("result").innerHTML =
+        "<h3>Recommended Role: " + data.recommended_role + "</h3>" +
+        "<p><b>Missing Skills:</b> " + data.missing_skills.join(", ") + "</p>" +
+        "<p><b>Roadmap:</b></p><ul>" +
+        data.roadmap.map(step => "<li>" + step + "</li>").join("") +
+        "</ul>";
+}
+</script>
+
+</body>
+</html>
